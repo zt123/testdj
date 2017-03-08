@@ -1,0 +1,40 @@
+#svn files
+.svn
+
+#vim swp files
+*.swp
+*.swo
+
+#log files
+*.log
+
+#windows thumb files
+Thumbs.db
+
+#mac os x
+.DS_Store
+~*
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# C extensions
+*.so
+
+# Distribution / packaging
+.Python
+env/
+.idea
+
+# Translations
+*.mo
+*.pot
+*.jpg
+*.png
+# *.html
+*.txt
+
+# Django stuff:
+*.log
