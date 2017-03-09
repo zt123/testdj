@@ -67,9 +67,11 @@ def get_detail(request, *args):
     '''获取用户详情'''
     cnn = mysql.connector.connect(user='root', password='199284', database='django_test', host='127.0.0.1', port=3306, buffered=True)
     cursor = cnn.cursor()
-    sql = "select * from testmodel_test where id = '{0}'".format(int(args[0]))
+    sql = "select * from testmodel_test where {0} = {1}".format(args[0], args[1])
     cursor.execute(sql)
     cnn.commit()
+
+    print sql
 
     index = cursor.description
     result = []
@@ -79,8 +81,8 @@ def get_detail(request, *args):
             row[index[i][0]] = res[i]
         result.append(row)
 
-    print result
-    print json.dumps(result)
+    # print result
+    # print json.dumps(result)
 
     if request.method == 'GET':
         # list = Test.objects.all()
