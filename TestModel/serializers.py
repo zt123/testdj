@@ -1,4 +1,8 @@
+#!/usr/bin/env python2
+# -*- coding: utf-8 -*-
+# 序列化器，把数据包装成类似字典的格式
 from rest_framework import serializers
+
 from TestModel.models import Test
 from django.contrib.auth.models import User, Group
 
@@ -29,8 +33,9 @@ class TestSerializer(serializers.ModelSerializer):
     #     return instance
 
     class Meta:
-        model = Test
-        fields = ('name', 'age', 'type')
+        model = Test    # 序列化的对象
+        # fields = '__all__'  # 序列化的属性(全部字段序列化)
+        fields = ('name', 'age')    # 如果只需要序列化某几个属性可以用元组
 
 class UserSerializer(serializers.HyperlinkedModelSerializer):
     class Meta:

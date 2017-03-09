@@ -1,6 +1,10 @@
 #!/usr/bin/env python2
 # -*- coding: utf-8 -*-
+import json
 import time
+import MySQLdb
+import MySQLdb.cursors
+import mysql.connector
 from django.shortcuts import render_to_response
 from django.http import *
 from models import Test
@@ -9,9 +13,12 @@ import logging
 from rest_framework import viewsets
 from django.contrib.auth.models import User, Group
 from TestModel.serializers import UserSerializer, GroupSerializer, TestSerializer
+from rest_framework import permissions
+
+# 这两个模块把序列化后的数据包装成 api
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
-from rest_framework import permissions
+
 
 def index(request):
     entry = Test(name='lidong')
@@ -55,13 +62,67 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
 
 @api_view(['GET', 'POST'])
+# @permission_classes((permissions.AllowAny,))
 def get_detail(request, *args):
     '''获取用户详情'''
+    cnn = mysql.connector.connect(user='root', password='199284', database='django_test', host='127.0.0.1', port=3306, buffered=True)
+    cursor = cnn.cursor()
+    sql = "select * from testmodel_test where id = '{0}'".format(int(args[0]))
+    cursor.execute(sql)
+    cnn.commit()
+
+    index = cursor.description
+    result = []
+    for res in cursor.fetchall():
+        row = {}
+        for i in range(len(index) - 1):
+            row[index[i][0]] = res[i]
+        result.append(row)
+
+    print result
+    print json.dumps(result)
+
     if request.method == 'GET':
-        list = Test.objects.all()
-        serializer = TestSerializer(list, many=True)
-        return Response(serializer.data)
+        # list = Test.objects.all()
+        # print list
+        # serializer = TestSerializer(list, many=True)
+        # print serializer.data
+        # return Response(serializer.data)
+
+        # data = {"name": args[0]}
+        # serializer = TestSerializer(cursor.fetchall(), many=True)
+        # data = serializer.data
+        # data['sql'] = sql
+        # print data
+
+        return HttpResponse(json.dumps(result, ensure_ascii=False))
     elif request.method == 'POST':
         print 'post'
 
-# def get
+    cursor.close()
+    cnn.close()
+
+@api_view(['GET', 'POST'])
+# @permission_classes((permissions.AllowAny,))
+def add_user(request, **kw):
+    '''添加用户'''
+    cnn = mysql.connector.connect(user='root', password='199284', database='django_test', host='127.0.0.1', port=3306)
+    # if request.method == 'POST':
+        # serializer = TestSerializer(list, many=True)
+    # for key,value in kw.iteritems():
+    #     print key, value
+
+    # for key,value in request.data:
+    # print request.data['description']
+
+    cursor = cnn.cursor()
+    sql = "insert into testmodel_test (name, age, type) values('{0}', '{1}', '{2}')".format(
+        request.data['name'], request.data['age'], request.data['type']
+    )
+    result = cursor.execute(sql)
+
+    cnn.commit()
+    cursor.close()
+    cnn.close()
+
+    return Response({"status": result})

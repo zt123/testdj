@@ -9,5 +9,5 @@ class Test(models.Model):
     age = models.CharField(default='', max_length=100)
     type = models.CharField(default='friendly', max_length=100)
 
-    class Meta:
-        ordering = ('created',)
+    # class Meta:
+    #     ordering = ('created',)

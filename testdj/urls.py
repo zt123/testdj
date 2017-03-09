@@ -29,9 +29,11 @@ router = routers.DefaultRouter()
 # ]
 
 urlpatterns = [
+    url(r'^', include(router.urls)),
     # url(r'list/$', views.get_xx_tabs),
-    url(r'api/detail/$', views.get_detail),
+    url(r'api/detail/([0-9]+)$', views.get_detail),
     # url(r'delete/([0-9]+)$', views.delete_xx_tab),
     # url(r'update/([0-9]+)$', views.update_xx_tab),
-    # url(r'add/$', views.add_xx_tab),
+    url(r'api/add/?$', views.add_user),
+    url(r'api/add/(?P<pk>[0-9]+)/$', views.add_user),
 ]
